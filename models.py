@@ -5,4 +5,4 @@ class Operation:
         self.operation = operation
         self.unit_cost = unit_cost
         self.quantity = quantity
-
+    

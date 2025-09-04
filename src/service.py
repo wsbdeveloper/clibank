@@ -60,7 +60,7 @@ class ExecutionService:
         else:
             # operation resulted in a loss
             tax = Decimal('0.00')
-            self.accumulated_loss += abs(profit_loss)
+            self.accumulated_loss += abs(Decimal(profit_loss))
 
         self.total_shares -= operation.quantity
 

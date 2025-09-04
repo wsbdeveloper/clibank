@@ -43,3 +43,16 @@ class TestExecutionService(unittest.TestCase):
         breakpoint()
         self.assertEqual(result.tax, expected_tax)
         self.assertEqual(self.execution_service.total_shares, 5000)
+
+    def test_sell_with_loss(self):
+        buy_op = Operation("buy", 20.00, 10000)
+        self.execution_service.process_operation(buy_op)
+
+        sell_op = Operation("sell", 10.00, 5000)
+        result = self.execution_service.process_operation(sell_op)
+
+        # Loss: 10 - 20) * 5000 = -5000
+        self.assertEqual(result.tax, result.tax)
+        self.assertEqual(self.execution_service.total_shares, 5000)
+
+

@@ -1,13 +1,17 @@
 from decimal import Decimal
-from domain import Operation
+from domain import Operation, TaxResult
 
 
-class ExecutionService():
+class ExecutionService:
     """ Service to process buy and sell operations"""
 
     def process_operation(self, operation: Operation) -> str:
         if operation.operation == "buy":
             return self._process_buy(operation)
+        elif operation.operation == "sell":
+            return self._process_sell(operation)
+        else:
+            raise ValueError("Invalid operation type")
     
     def __init__(self):
         self.total_shares = 0
@@ -16,7 +20,6 @@ class ExecutionService():
 
     def _process_buy(self, operation: Operation) -> str:
         """ Process a buy operation"""
-        breakpoint()
         if self.total_shares == 0: # first buy
             self.weighted_average_price = operation.unit_cost
         else:
@@ -25,7 +28,7 @@ class ExecutionService():
             self.weighted_average_price = (total_cost + new_cost) / (self.total_shares + operation.quantity)
         
         self.total_shares += operation.quantity
-        return "0.00"
+        return TaxResult(0)
 
     def _process_sell(self, operation: Operation) -> str:
         """ Process a sell operation"""
@@ -58,5 +61,18 @@ class ExecutionService():
 
         self.total_shares -= operation.quantity
 
-        return Decimal(tax).quantize(Decimal('0.00'))
+        return TaxResult(tax)
 
+class TaxCalculation:
+
+    def __init__(self):
+        self.service = ExecutionService()
+
+    def process_lines(self, lines: str) -> List:
+        try:
+
+            data_operations = json.loads(lines)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON input: {e}")
+        except Exception as e:
+            raise ValueError(f"Error processing lines: {e}")

@@ -3,6 +3,7 @@ import click
 @click.group()
 @click.version_option(version="1.0.0")
 def cli():
+    # Constructor the CLI group
     pass
 
 @cli.command()

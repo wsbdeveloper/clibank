@@ -1,17 +1,14 @@
 from decimal import Decimal
+from models import Operation
 
-def IExecutionService():
-    def _process_buy(self, operation: Operation) -> str:
-        pass
 
-    def _process_sell(self, operation: Operation) -> str:
-        pass
+class ExecutionService():
+    """ Service to process buy and sell operations"""
 
-class ExecutionService(IExecutionService):
-    """
-        TODO: realizar processamento de operações dado o requerimento do pdf
-    """
-
+    def process_operation(self, operation: Operation) -> str:
+        if operation.operation == "buy":
+            return self._process_buy(operation)
+    
     def __init__(self):
         self.total_shares = 0
         self.weighted_average_price = Decimal('0.0')
@@ -59,6 +56,4 @@ class ExecutionService(IExecutionService):
         self.total_shares -= operation.quantity
 
         return Decimal(tax).quantize(Decimal('0.00'))
-
-
 

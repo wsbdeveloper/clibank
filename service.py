@@ -1,5 +1,5 @@
 from decimal import Decimal
-from models import Operation
+from domain import Operation
 
 
 class ExecutionService():
@@ -16,12 +16,15 @@ class ExecutionService():
 
     def _process_buy(self, operation: Operation) -> str:
         """ Process a buy operation"""
+        breakpoint()
         if self.total_shares == 0: # first buy
             self.weighted_average_price = operation.unit_cost
         else:
             total_cost = self.total_shares * self.weighted_average_price
             new_cost = operation.quantity * operation.unit_cost
             self.weighted_average_price = (total_cost + new_cost) / (self.total_shares + operation.quantity)
+        
+        self.total_shares += operation.quantity
         return "0.00"
 
     def _process_sell(self, operation: Operation) -> str:

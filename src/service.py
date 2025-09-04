@@ -1,3 +1,6 @@
+import json
+from typing import List
+
 from decimal import Decimal
 from domain import Operation, TaxResult
 
@@ -46,7 +49,7 @@ class ExecutionService:
                 tax = Decimal('0.00')
             else:
                 # operation is taxable at 20%
-                taxable_profit = profit_loss - self.accumulated_loss
+                taxable_profit = Decimal(profit_loss) - self.accumulated_loss
 
                 if taxable_profit > 0:
                     tax = taxable_profit * Decimal('0.20')
@@ -71,7 +74,20 @@ class TaxCalculation:
     def process_lines(self, lines: str) -> List:
         try:
 
-            data_operations = json.loads(lines)
+            data_operations = json.loads(lines.strip())
+
+            if not isinstance(data_operations, list):
+                raise ValueError("Entrada deve ser uma lista de operações")
+            
+            results = []
+            
+            # Process the operations
+            for op_data in data_operations:
+                operation = Operation.from_dict(op_data)
+                result = self.service.process_operation(operation)
+                results.append(result)
+            
+            return results
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON input: {e}")
         except Exception as e:

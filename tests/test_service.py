@@ -54,5 +54,23 @@ class TestExecutionService(unittest.TestCase):
         # Loss: 10 - 20) * 5000 = -5000
         self.assertEqual(result.tax, result.tax)
         self.assertEqual(self.execution_service.total_shares, 5000)
+    
+    def test_loss_predict_from_profit(self):
+        buy_op = Operation("buy", 20.00, 10000)
+        self.execution_service.process_operation(buy_op)
+
+        sell_loss = Operation("sell", 10.00, 5000)
+        self.execution_service.process_operation(sell_loss)
+        
+        # sell with profit 
+        sell_profit = Operation("sell", 30.00, 2500)
+        result = self.execution_service.process_operation(sell_profit)
+
+        # gross profit: (30 - 20) * 2500 = 25000
+        # prejudice: 50000
+        # 25000 - 50000 = -25000 
+        self.assertEqual(result.tax, Decimal("0"))
+        self.assertEqual(self.execution_service.accumulated_loss, Decimal("25000"))
+
 
 
